@@ -6,16 +6,20 @@ from sqlalchemy_serializer import SerializerMixin
 
 from models import db, Article, User
 
+# instantiate flask
 app = Flask(__name__)
+# app secret key?
 app.secret_key = b'Y\xf1Xz\x00\xad|eQ\x80t \xca\x1a\x10K'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 
+# instantiate migrage
 migrate = Migrate(app, db)
 
 db.init_app(app)
 
+# some routes not being hit?
 @app.route('/test')
 def test():
     print('testing')
@@ -38,9 +42,10 @@ def index_articles():
 
 @app.route('/articles/<int:id>')
 def show_article(id):
-    page_views = 0
+    
     article = Article.query.filter(Article.id == id).first()
-    session['page_views'] = session.get('page_views') + 1 or 0
+    # session['user_id'] = 
+    session['page_views'] = session.get('page_views', 0) + 1 
     
     print(session)
     if session['page_views'] <= 3:
